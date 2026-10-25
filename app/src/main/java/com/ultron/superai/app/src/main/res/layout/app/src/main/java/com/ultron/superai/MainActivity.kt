@@ -1,76 +1,61 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#0A0A0A"
-    android:orientation="vertical"
-    android:padding="16dp">
+package com.ultron.superai
 
-    <!-- স্ট্যাটাস বার: সাব-সিস্টেম স্ট্যাটাস দেখানোর জন্য -->
-    <TextView
-        android:id="@+id/tvStatusBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="[ ULTRON SUPER AI : 65 SUB-SYSTEMS ONLINE ]"
-        android:textColor="#00FF66"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        android:paddingBottom="8dp" />
+import android.os.Bundle
+import android.widget.Button
+import android.widget.EditText
+import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import java.io.PrintWriter
+import java.net.Socket
+import java.util.concurrent.Executors
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#00FF66"
-        android:layout_marginBottom="12dp"/>
+class MainActivity : AppCompatActivity() {
 
-    <!-- কনসোল লগ: AI এর সাথে কথা বলা বা মেসেজ দেখানোর স্ক্রিন -->
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="#121212"
-        android:padding="12dp"
-        android:fillViewport="true">
+    private val executor = Executors.newSingleThreadExecutor()
+    // Apnar PC-er fix kora IP address ekhane bosano holo
+    private val pcIpAddress = "192.168.1.108" 
+    private val port = 65000
 
-        <TextView
-            android:id="@+id/tvConsoleLog"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="> Booting ULTRON Core Matrix...\n> Voice Biometric: Armed (Boss Only Mode).\n> Language Protocol: Bengali (Default).\n\n"
-            android:textColor="#00FFCC"
-            android:textSize="13sp"
-            android:fontFamily="monospace" />
-    </ScrollView>
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
 
-    <!-- কমান্ড লেখার বক্স এবং বাটন -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="12dp">
+        val statusText = findViewById<TextView>(R.id.statusText)
+        val commandInput = findViewById<EditText>(R.id.commandInput)
+        val sendButton = findViewById<Button>(R.id.sendButton)
 
-        <EditText
-            android:id="@+id/etCommandInput"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="#1E1E1E"
-            android:hint="Type command, Boss..."
-            android:textColor="#FFFFFF"
-            android:textColorHint="#777777"
-            android:textSize="14sp"
-            android:padding="12dp"
-            android:inputType="text" />
+        sendButton.setOnClickListener {
+            val command = commandInput.text.toString().trim()
+            if (command.isNotEmpty()) {
+                sendToServer(command, statusText)
+            }
+        }
+    }
 
-        <Button
-            android:id="@+id/btnExecute"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:backgroundTint="#00FF66"
-            android:text="EXECUTE"
-            android:textColor="#000000"
-            android:textStyle="bold" />
-    </LinearLayout>
+    private fun sendToServer(command: String, statusText: TextView) {
+        executor.execute {
+            try {
+                // PC server-er sathe socket connection toiri
+                val socket = Socket(pcIpAddress, port)
+                val writer = PrintWriter(socket.outputStream, true)
+                
+                // Command transmit kora
+                writer.println(command)
+                
+                writer.close()
+                socket.close()
 
-</LinearLayout>
+                runOnUiThread {
+                    statusText.text = "STATUS: SENT [$command]"
+                    statusText.setTextColor(0xFF00FF66.toInt()) // Green
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                runOnUiThread {
+                    statusText.text = "STATUS: CONNECTION FAILED"
+                    statusText.setTextColor(0xFFFF3333.toInt()) // Red
+                }
+            }
+        }
+    }
+}
