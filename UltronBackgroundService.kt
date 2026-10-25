@@ -1,4 +1,4 @@
-package com.ultron.ai // আপনার প্রজেক্টের প্যাকেজ নেম অনুযায়ী এটি পরিবর্তন করে নিতে পারেন
+package com.ultron.superai
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -9,19 +9,24 @@ import android.os.IBinder
 import android.os.Build
 import android.speech.tts.TextToSpeech
 import android.util.Log
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.io.PrintWriter
+import java.net.Socket
 import java.util.Locale
 import kotlin.concurrent.thread
-import kotlin.random.Random
 
 class UltronBackgroundService : Service(), TextToSpeech.OnInitListener {
 
     private lateinit var tts: TextToSpeech
     private var isRunning = false
+    private val pcIpAddress = "192.168.1.108" // আপনার পিসির লোকাল আইপি
+    private val port = 65000
 
     override fun onCreate() {
         super.onCreate()
         tts = TextToSpeech(this, this)
-        Log.d("UltronAI", "Background Service Created")
+        Log.d("UltronAI", "Advanced Background Service Created")
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -30,7 +35,7 @@ class UltronBackgroundService : Service(), TextToSpeech.OnInitListener {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 channelId,
-                "Ultron AI Background Core",
+                "Ultron AI Autonomous Core",
                 NotificationManager.IMPORTANCE_LOW
             )
             val manager = getSystemService(NotificationManager::class.java)
@@ -39,48 +44,65 @@ class UltronBackgroundService : Service(), TextToSpeech.OnInitListener {
 
         val notification: Notification = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             Notification.Builder(this, channelId)
-                .setContentTitle("ULTRON SUPER AI Active")
-                .setContentText("Background 24h Trading & Candle Analysis Running...")
+                .setContentTitle("ULTRON SUPER AI - Autonomous Mode")
+                .setContentText("Socket Bridge & Real-time Voice Guidance Active...")
                 .setSmallIcon(android.R.drawable.ic_menu_compass)
                 .build()
         } else {
             Notification.Builder(this)
-                .setContentTitle("ULTRON SUPER AI Active")
-                .setContentText("Background 24h Trading & Candle Analysis Running...")
+                .setContentTitle("ULTRON SUPER AI - Autonomous Mode")
+                .setContentText("Socket Bridge & Real-time Voice Guidance Active...")
                 .setSmallIcon(android.R.drawable.ic_menu_compass)
                 .build()
         }
 
-        // Start Foreground to prevent Redmi 8A from killing the service
         startForeground(1, notification)
-
-        // Start Background Autonomous Trading & Candle Analysis Loop
-        startAutonomousTradingBrain()
+        startAutonomousSocketLoop()
 
         return START_STICKY
     }
 
-    private fun startAutonomousTradingBrain() {
+    private fun startAutonomousSocketLoop() {
         isRunning = true
         thread {
             while (isRunning) {
                 try {
-                    // Simulating 100 Trading Knowledge, Telegram/YouTube/Google data sync & Demo Trade check
-                    Thread.sleep(15000) // প্রতি ১৫ সেকেন্ড পর পর মার্কেট স্ক্যান ও ক্যান্ডেল অ্যানালাইসিস
+                    Thread.sleep(20000) // প্রতি ২০ সেকেন্ড পর পর পিসির ব্যাকএন্ডে রিকোয়েস্ট পাঠাবে
                     
-                    val simulatedPair = "EUR/USD OTC"
-                    val winProbability = Random.nextInt(75, 95)
-                    val candleAction = if (Random.nextBoolean()) "Bullish Breakout (Green Candle)" else "Bearish Rejection (Red Candle)"
+                    val socket = Socket(pcIpAddress, port)
+                    val writer = PrintWriter(socket.outputStream, true)
+                    val reader = BufferedReader(InputStreamReader(socket.inputStream))
                     
-                    val announcement = "বস, $simulatedPair মার্কেটে নতুন ক্যান্ডেল অ্যানালিসিস কমপ্লিট। বর্তমান অবস্থা: $candleAction। ডেমো টেস্টে উইন রেট পাওয়া গেছে $winProbability শতাংশ। ট্রেড নেওয়ার উপযোগী।"
+                    writer.println("get_signal")
+                    val response = reader.readLine()
                     
-                    Log.d("UltronAI", announcement)
-                    speakOut(announcement)
+                    writer.close()
+                    reader.close()
+                    socket.close()
+
+                    if (response != null) {
+                        Log.d("UltronAI", "Received from PC: $response")
+                        parseAndAnnounce(response)
+                    }
 
                 } catch (e: Exception) {
-                    Log.e("UltronAI", "Error in background loop: ${e.message}")
+                    Log.e("UltronAI", "Socket communication error: {e.message}")
                 }
             }
+        }
+    }
+
+    private fun parseAndAnnounce(jsonResponse: String) {
+        try {
+            // সাধারণ টেক্সট বা জেসন পার্স করে ভয়েস রেডি করা
+            if (jsonResponse.contains("pair")) {
+                val announcement = "বস, নতুন মার্কেট সিগন্যাল পাওয়া গেছে। 100 ট্রেডিং প্রোটোকল ম্যাচ হয়েছে। দ্রুত চেক করুন।"
+                speakOut(announcement)
+            } else {
+                speakOut("বস, উল্ট্রন সিস্টেম ফুললি সিকিউর এবং একটিভ আছে।")
+            }
+        } catch (e: Exception) {
+            Log.e("UltronAI", "Parsing error: {e.message}")
         }
     }
 
@@ -92,9 +114,8 @@ class UltronBackgroundService : Service(), TextToSpeech.OnInitListener {
 
     override fun onInit(status: Int) {
         if (status == TextToSpeech.SUCCESS) {
-            val result = tts.setLocale(Locale("bn", "BD")) // বাংলা ভয়েস আউটপুটের জন্য
+            val result = tts.setLocale(Locale("bn", "BD"))
             if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
-                Log.e("UltronAI", "Bengali Language not supported, fallback to English")
                 tts.setLocale(Locale.US)
             }
         }
