@@ -1,7 +1,10 @@
 package com.ultron.superai
 
+import android.content.Intent
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -21,6 +24,20 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // --- ULTRON BACKGROUND SERVICE START (REDMI 8A 24/7 SUPPORT) ---
+        try {
+            val serviceIntent = Intent(this, UltronBackgroundService::class.java)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startForegroundService(serviceIntent)
+            } else {
+                startService(serviceIntent)
+            }
+            Log.d("UltronAI", "Background Service Triggered Successfully from MainActivity")
+        } catch (e: Exception) {
+            Log.e("UltronAI", "Failed to start service: ${e.message}")
+        }
+        // -------------------------------------------------------------
+
         val statusText = findViewById<TextView>(R.id.statusText)
         val commandInput = findViewById<EditText>(R.id.commandInput)
         val sendButton = findViewById<Button>(R.id.sendButton)
@@ -38,7 +55,7 @@ class MainActivity : AppCompatActivity() {
                         return@setOnClickListener
                     }
                     "ai:status" -> {
-                        statusText.text = "STATUS: ULTRON AI CORE ONLINE [READY]"
+                        statusText.text = "STATUS: ULTRON AI CORE ONLINE [READY - 64 SYSTEMS ACTIVE]"
                         statusText.setTextColor(Color.parseColor("#00FF66")) // Green color
                         commandInput.text.clear()
                         return@setOnClickListener
@@ -71,7 +88,7 @@ class MainActivity : AppCompatActivity() {
                 writer.close()
                 socket.close()
 
-                // সফলভাবে সেন্ড হওয়ার পর UI আপডেট
+                // সফলভাবে সেন্ড হওয়ার পর UI আপডেট
                 runOnUiThread {
                     statusText.text = "STATUS: EXECUTED [$command]"
                     statusText.setTextColor(Color.parseColor("#00FF66")) // Green
