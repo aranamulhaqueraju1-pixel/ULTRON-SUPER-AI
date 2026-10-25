@@ -1,73 +1,76 @@
-package com.ultron.superai
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#0A0A0A"
+    android:orientation="vertical"
+    android:padding="16dp">
 
-import android.os.Bundle
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
+    <!-- স্ট্যাটাস বার: সাব-সিস্টেম স্ট্যাটাস দেখানোর জন্য -->
+    <TextView
+        android:id="@+id/tvStatusBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="[ ULTRON SUPER AI : 65 SUB-SYSTEMS ONLINE ]"
+        android:textColor="#00FF66"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:paddingBottom="8dp" />
 
-class MainActivity : AppCompatActivity() {
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#00FF66"
+        android:layout_marginBottom="12dp"/>
 
-    private lateinit var tvConsoleLog: TextView
-    private lateinit var etCommandInput: EditText
-    private lateinit var btnExecute: Button
-    private lateinit var tvStatusBar: TextView
+    <!-- কনসোল লগ: AI এর সাথে কথা বলা বা মেসেজ দেখানোর স্ক্রিন -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="#121212"
+        android:padding="12dp"
+        android:fillViewport="true">
 
-    // Simulated Autonomous Trading Memory & Stats
-    private var lastNightTradesCount: Int = 14
-    private var lastNightAccuracy: Double = 87.5
-    private var selfLearnedRulesCount: Int = 105 // 100 base + 5 new self-learned rules
+        <TextView
+            android:id="@+id/tvConsoleLog"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="> Booting ULTRON Core Matrix...\n> Voice Biometric: Armed (Boss Only Mode).\n> Language Protocol: Bengali (Default).\n\n"
+            android:textColor="#00FFCC"
+            android:textSize="13sp"
+            android:fontFamily="monospace" />
+    </ScrollView>
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+    <!-- কমান্ড লেখার বক্স এবং বাটন -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="12dp">
 
-        // Initialize UI Components
-        tvConsoleLog = findViewById(R.id.tvConsoleLog)
-        etCommandInput = findViewById(R.id.etCommandInput)
-        btnExecute = findViewById(R.id.btnExecute)
-        tvStatusBar = findViewById(R.id.tvStatusBar)
+        <EditText
+            android:id="@+id/etCommandInput"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="#1E1E1E"
+            android:hint="Type command, Boss..."
+            android:textColor="#FFFFFF"
+            android:textColorHint="#777777"
+            android:textSize="14sp"
+            android:padding="12dp"
+            android:inputType="text" />
 
-        // Initial System Boot Log
-        appendLog("> ULTRON SUPER AI: Online.")
-        appendLog("> Neural Link: Stable. 64 Sub-systems Armed.")
-        appendLog("> Base Protocols: 100 Active (Dynamic Learning Enabled).\n")
+        <Button
+            android:id="@+id/btnExecute"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:backgroundTint="#00FF66"
+            android:text="EXECUTE"
+            android:textColor="#000000"
+            android:textStyle="bold" />
+    </LinearLayout>
 
-        // Execute Button Click Listener
-        btnExecute.setOnClickListener {
-            val command = etCommandInput.text.toString().trim()
-            if (command.isNotEmpty()) {
-                processUserCommand(command)
-                etCommandInput.text.clear()
-            }
-        }
-    }
-
-    private fun processUserCommand(input: String) {
-        appendLog("Boss: $input")
-
-        val lowerInput = input.lowercase()
-
-        val response = when {
-            lowerInput.contains("trade") || lowerInput.contains("trading") || lowerInput.contains("result") -> {
-                "ULTRON: Boss, last night I executed $lastNightTradesCount demo trades autonomously. Accuracy was at $lastNightAccuracy%. I integrated 5 new rules from web intelligence into my core database (Total active rules: $selfLearnedRulesCount)."
-            }
-            lowerInput.contains("status") -> {
-                "ULTRON: All 64 sub-systems operating at peak performance. Autonomous engine is on standby."
-            }
-            lowerInput.contains("clear") -> {
-                tvConsoleLog.text = "> Console Cleared.\n"
-                return
-            }
-            else -> {
-                "ULTRON: Command acknowledged: '$input'. Processing via neural matrix..."
-            }
-        }
-
-        appendLog("$response\n")
-    }
-
-    private fun appendLog(text: String) {
-        tvConsoleLog.append("$text\n")
-    }
-}
+</LinearLayout>
