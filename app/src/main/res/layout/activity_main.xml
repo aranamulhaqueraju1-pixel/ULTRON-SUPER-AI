@@ -10,51 +10,136 @@
         android:id="@+id/tvTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="ULTRON SUPER AI // HUD v1.0"
+        android:text="ULTRON SUPER AI // HUD v4.0"
         android:textColor="#00E5FF"
         android:textSize="18sp"
         android:textStyle="bold"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp" />
+        android:layout_marginTop="10dp" />
 
-    <!-- Core Status Box -->
-    <TextView
-        android:id="@+id/tvStatus"
+    <!-- Live Trading Pair & Win Rate Stats Bar -->
+    <LinearLayout
+        android:id="@+id/statsLayout"
         android:layout_width="match_parent"
-        android:layout_height="150dp"
+        android:layout_height="wrap_content"
         android:layout_below="@id/tvTitle"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal"
         android:background="#0A192F"
-        android:padding="12dp"
-        android:text="[ SYSTEM ONLINE ]\nWaiting for BOSS command..."
-        android:textColor="#64FFDA"
-        android:textSize="14sp"
-        android:fontFamily="monospace" />
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/txtPair"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="PAIR: ---"
+            android:textColor="#FFEA00"
+            android:textSize="13sp"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/txtWinRate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="WIN RATE: --%"
+            android:textColor="#00FF66"
+            android:textSize="13sp"
+            android:textStyle="bold"/>
+    </LinearLayout>
+
+    <!-- Core Status & Output Box -->
+    <ScrollView
+        android:id="@+id/scrollBox"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_below="@id/statsLayout"
+        android:layout_above="@id/quickButtonsLayout"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:background="#0A192F"
+        android:padding="12dp">
+
+        <TextView
+            android:id="@+id/tvStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="[ SYSTEM ONLINE ]\nWaiting for BOSS command..."
+            android:textColor="#64FFDA"
+            android:textSize="13sp"
+            android:fontFamily="monospace" />
+    </ScrollView>
+
+    <!-- Quick Action Shortcut Buttons -->
+    <LinearLayout
+        android:id="@+id/quickButtonsLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/etCommand"
+        android:layout_marginBottom="10dp"
+        android:orientation="horizontal"
+        android:weightSum="3">
+
+        <Button
+            android:id="@+id/btnGetSignal"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="38dp"
+            android:text="SIGNAL"
+            android:backgroundTint="#00AA55"
+            android:textColor="#FFFFFF"
+            android:textSize="11sp"
+            android:layout_marginRight="4dp"/>
+
+        <Button
+            android:id="@+id/btnDoctor"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="38dp"
+            android:text="DOCTOR"
+            android:backgroundTint="#0066FF"
+            android:textColor="#FFFFFF"
+            android:textSize="11sp"
+            android:layout_marginRight="4dp"
+            android:layout_marginLeft="4dp"/>
+
+        <Button
+            android:id="@+id/btnPentest"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="38dp"
+            android:text="PENTEST"
+            android:backgroundTint="#AA0000"
+            android:textColor="#FFFFFF"
+            android:textSize="11sp"
+            android:layout_marginLeft="4dp"/>
+    </LinearLayout>
 
     <!-- Command Input Box -->
     <EditText
         android:id="@+id/etCommand"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="48dp"
         android:layout_above="@id/btnExecute"
-        android:layout_marginBottom="15dp"
+        android:layout_marginBottom="10dp"
         android:background="#0A192F"
         android:hint="> ENTER COMMAND..."
         android:textColorHint="#4A5568"
         android:textColor="#00E5FF"
+        android:textSize="13sp"
         android:paddingHorizontal="12dp" />
 
     <!-- Execute Button -->
     <Button
         android:id="@+id/btnExecute"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="52dp"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="30dp"
+        android:layout_marginBottom="10dp"
         android:backgroundTint="#00E5FF"
-        android:text="INITIALIZE ULTRON"
+        android:text="EXECUTE COMMAND"
         android:textColor="#050B14"
-        android:textSize="16sp"
+        android:textSize="15sp"
         android:textStyle="bold" />
 
 </RelativeLayout>
