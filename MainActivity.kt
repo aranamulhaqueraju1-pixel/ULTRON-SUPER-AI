@@ -5,28 +5,35 @@ import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import org.json.JSONObject
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.io.PrintWriter
+import java.net.InetSocketAddress
 import java.net.Socket
 import java.util.concurrent.Executors
 
 class MainActivity : AppCompatActivity() {
 
     private val executor = Executors.newSingleThreadExecutor()
-    // পিসির সঠিক লোকাল আইপি অ্যাড্রেস
-    private val pcIpAddress = "192.168.1.108"
+    private val pcIpAddress = "192.168.1.108" // পিসির লোকাল আইপি
     private val port = 65000
+
+    private lateinit var tvStatus: TextView
+    private lateinit var txtPair: TextView
+    private lateinit var txtWinRate: TextView
+    private lateinit var etCommand: EditText
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // --- ULTRON BACKGROUND SERVICE START (REDMI 8A 24/7 SUPPORT) ---
+        // --- ULTRON BACKGROUND SERVICE START ---
         try {
             val serviceIntent = Intent(this, UltronBackgroundService::class.java)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -34,83 +41,129 @@ class MainActivity : AppCompatActivity() {
             } else {
                 startService(serviceIntent)
             }
-            Log.d("UltronAI", "Background Service Triggered Successfully from MainActivity")
+            Log.d("UltronAI", "Background Service Triggered Successfully")
         } catch (e: Exception) {
             Log.e("UltronAI", "Failed to start service: ${e.message}")
         }
-        // -------------------------------------------------------------
 
-        val statusText = findViewById<TextView>(R.id.statusText)
-        val commandInput = findViewById<EditText>(R.id.commandInput)
-        val sendButton = findViewById<Button>(R.id.sendButton)
+        tvStatus = findViewById(R.id.tvStatus)
+        txtPair = findViewById(R.id.txtPair)
+        txtWinRate = findViewById(R.id.txtWinRate)
+        etCommand = findViewById(R.id.etCommand)
+        val btnExecute = findViewById<Button>(R.id.btnExecute)
+        val btnGetSignal = findViewById<Button>(R.id.btnGetSignal)
+        val btnDoctor = findViewById<Button>(R.id.btnDoctor)
+        val btnPentest = findViewById<Button>(R.id.btnPentest)
 
-        sendButton.setOnClickListener {
-            val command = commandInput.text.toString().trim()
-            
-            if (command.isNotEmpty()) {
-                // 1. Local Command Handling (Phase 2 Logic: clear & ai:status)
-                when (command.lowercase()) {
-                    "clear" -> {
-                        statusText.text = "STATUS: CONSOLE CLEARED"
-                        statusText.setTextColor(Color.parseColor("#00E5FF")) // Cyan color
-                        commandInput.text.clear()
-                        return@setOnClickListener
-                    }
-                    "ai:status" -> {
-                        statusText.text = "STATUS: ULTRON AI CORE ONLINE [READY - 64 SYSTEMS ACTIVE]"
-                        statusText.setTextColor(Color.parseColor("#00FF66")) // Green color
-                        commandInput.text.clear()
-                        return@setOnClickListener
-                    }
-                }
+        // Execute Button Click
+        btnExecute.setOnClickListener {
+            executeCommandFromInput()
+        }
 
-                // 2. Real-time Processing Feedback for Network/Server Commands
-                statusText.text = "STATUS: PROCESSING AI COMMAND..."
-                statusText.setTextColor(Color.parseColor("#FFEA00")) // Yellow color
-                
-                // Auto-clear input box immediately
-                commandInput.text.clear()
-
-                // 3. Socket Transmission to PC Bridge & Receive Response
-                sendToServer(command, statusText)
+        // Keyboard Enter Key Listener (ইনপুট বক্সে এন্টার চাপলে অটো কমান্ড এক্সিকিউট হবে)
+        etCommand.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_SEND || actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_GO) {
+                executeCommandFromInput()
+                true
+            } else {
+                false
             }
+        }
+
+        // Quick Shortcut Buttons
+        btnGetSignal.setOnClickListener { processAndSendCommand("get_signal") }
+        btnDoctor.setOnClickListener { processAndSendCommand("doctor") }
+        btnPentest.setOnClickListener { processAndSendCommand("pentest") }
+    }
+
+    private fun executeCommandFromInput() {
+        val command = etCommand.text.toString().trim()
+        if (command.isNotEmpty()) {
+            processAndSendCommand(command)
         }
     }
 
-    private fun sendToServer(command: String, statusText: TextView) {
+    private fun processAndSendCommand(command: String) {
+        // Local Command Check
+        when (command.lowercase()) {
+            "clear" -> {
+                tvStatus.text = "[ SYSTEM ONLINE ]\nConsole cleared by BOSS."
+                tvStatus.setTextColor(Color.parseColor("#00E5FF"))
+                txtPair.text = "PAIR: ---"
+                txtWinRate.text = "WIN RATE: --%"
+                etCommand.text.clear()
+                return
+            }
+            "ai:status" -> {
+                tvStatus.text = "[ STATUS: ULTRON AI CORE ONLINE ]\n64 Systems, Scraper & Hacking Modules Active."
+                tvStatus.setTextColor(Color.parseColor("#00FF66"))
+                etCommand.text.clear()
+                return
+            }
+        }
+
+        tvStatus.text = "STATUS: PROCESSING [$command]..."
+        tvStatus.setTextColor(Color.parseColor("#FFEA00"))
+        etCommand.text.clear()
+
+        sendToServer(command)
+    }
+
+    private fun sendToServer(command: String) {
         executor.execute {
+            var socket: Socket? = null
             try {
-                // পিসির সার্ভারের সাথে সকেট কানেকশন তৈরি
-                val socket = Socket(pcIpAddress, port)
+                // সকেট কানেকশন উইথ ৩ সেকেন্ড টাইমআউট (অটো-লক প্রিভেন্ট করতে)
+                socket = Socket()
+                socket.connect(InetSocketAddress(pcIpAddress, port), 3000)
+                
                 val writer = PrintWriter(socket.outputStream, true)
                 val reader = BufferedReader(InputStreamReader(socket.inputStream))
                 
-                // কমান্ড ট্রান্সমিট করা
                 writer.println(command)
-                
-                // পিসির পাইথন ব্যাকএন্ড থেকে রেসপন্স রিড করা (Binance/Quotex/RSI/Hacking Data)
                 val response = reader.readLine()
                 
                 writer.close()
                 reader.close()
                 socket.close()
 
-                // সফলভাবে রেসপন্স রিসিভ করার পর UI আপডেট
                 runOnUiThread {
                     if (response != null) {
-                        statusText.text = "RESULT: $response"
-                        statusText.setTextColor(Color.parseColor("#00FF66")) // Green
+                        try {
+                            // Try parsing JSON Trading Signal
+                            val json = JSONObject(response)
+                            val pair = json.optString("pair", "N/A")
+                            val action = json.optString("action", "N/A")
+                            val winRate = json.optString("win_rate", "N/A")
+                            val intel = json.optString("market_intel", json.optString("intel", ""))
+
+                            txtPair.text = "PAIR: $pair"
+                            txtWinRate.text = "WIN RATE: $winRate"
+
+                            val report = "[ VIP SIGNAL RECEIVED ]\nAsset: $pair\nAction: $action\nWin Prob: $winRate\nIntel: $intel"
+                            tvStatus.text = report
+                            tvStatus.setTextColor(Color.parseColor("#00FF66"))
+                        } catch (e: Exception) {
+                            // Non-JSON response (Doctor/Pentest)
+                            tvStatus.text = "[ EXECUTION RESULT ]\n$response"
+                            tvStatus.setTextColor(Color.parseColor("#64FFDA"))
+                        }
                     } else {
-                        statusText.text = "STATUS: EXECUTED [$command] (No data returned)"
-                        statusText.setTextColor(Color.parseColor("#00E5FF")) // Cyan
+                        tvStatus.text = "STATUS: NO RESPONSE FROM BRIDGE"
+                        tvStatus.setTextColor(Color.parseColor("#FF3333"))
                     }
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
-                // কানেকশন ফেইল করলে UI আপডেট
                 runOnUiThread {
-                    statusText.text = "STATUS: CONNECTION FAILED (${e.localizedMessage})"
-                    statusText.setTextColor(Color.parseColor("#FF3333")) // Red
+                    tvStatus.text = "STATUS: CONNECTION FAILED\nMake sure PC bridge is running at $pcIpAddress:$port\n(${e.localizedMessage})"
+                    tvStatus.setTextColor(Color.parseColor("#FF3333"))
+                }
+            } finally {
+                try {
+                    socket?.close()
+                } catch (ex: Exception) {
+                    ex.printStackTrace()
                 }
             }
         }
