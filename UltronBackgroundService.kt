@@ -67,7 +67,7 @@ class UltronBackgroundService : Service(), TextToSpeech.OnInitListener {
         thread {
             while (isRunning) {
                 try {
-                    Thread.sleep(20000) // প্রতি ২০ সেকেন্ড পর পর পিসির ব্যাকএন্ডে রিকোয়েস্ট পাঠাবে
+                    Thread.sleep(20000) // প্রতি ২০ সেকেন্ড পর পর পিসির ব্যাকএন্ডে রিকোয়েস্ট পাঠাবে
                     
                     val socket = Socket(pcIpAddress, port)
                     val writer = PrintWriter(socket.outputStream, true)
@@ -94,9 +94,9 @@ class UltronBackgroundService : Service(), TextToSpeech.OnInitListener {
 
     private fun parseAndAnnounce(jsonResponse: String) {
         try {
-            // সাধারণ টেক্সট বা জেসন পার্স করে ভয়েস রেডি করা
+            // সাধারণ টেক্সট বা জেসন পার্স করে ভয়েস রেডি করা
             if (jsonResponse.contains("pair")) {
-                val announcement = "বস, নতুন মার্কেট সিগন্যাল পাওয়া গেছে। 100 ট্রেডিং প্রোটোকল ম্যাচ হয়েছে। দ্রুত চেক করুন।"
+                val announcement = "বস, নতুন মার্কেট সিগন্যাল পাওয়া গেছে। 100 ট্রেডিং প্রোটোকল ম্যাচ হয়েছে। দ্রুত চেক করুন।"
                 speakOut(announcement)
             } else {
                 speakOut("বস, উল্ট্রন সিস্টেম ফুললি সিকিউর এবং একটিভ আছে।")
