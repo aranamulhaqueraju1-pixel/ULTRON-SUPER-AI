@@ -5,7 +5,7 @@ on:
     branches: [ main ]
 
 permissions:
-  contents: write   # <-- এই পার্মিশনটি যোগ করতে হবে
+  contents: write
 
 jobs:
   build:
@@ -33,6 +33,7 @@ jobs:
         files: |
           app/build/outputs/apk/debug/*.apk
           **/build/outputs/apk/debug/*.apk
+          **/*.apk
         tag_name: v1.0.${{ github.run_number }}
         name: Ultron AI Build v1.0.${{ github.run_number }}
         draft: false
