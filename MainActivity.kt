@@ -9,6 +9,8 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import java.io.BufferedReader
+import java.io.InputStreamReader
 import java.io.PrintWriter
 import java.net.Socket
 import java.util.concurrent.Executors
@@ -69,7 +71,7 @@ class MainActivity : AppCompatActivity() {
                 // Auto-clear input box immediately
                 commandInput.text.clear()
 
-                // 3. Socket Transmission to PC Bridge
+                // 3. Socket Transmission to PC Bridge & Receive Response
                 sendToServer(command, statusText)
             }
         }
@@ -81,23 +83,33 @@ class MainActivity : AppCompatActivity() {
                 // পিসির সার্ভারের সাথে সকেট কানেকশন তৈরি
                 val socket = Socket(pcIpAddress, port)
                 val writer = PrintWriter(socket.outputStream, true)
+                val reader = BufferedReader(InputStreamReader(socket.inputStream))
                 
                 // কমান্ড ট্রান্সমিট করা
                 writer.println(command)
                 
+                // পিসির পাইথন ব্যাকএন্ড থেকে রেসপন্স রিড করা (Binance/Quotex/RSI/Hacking Data)
+                val response = reader.readLine()
+                
                 writer.close()
+                reader.close()
                 socket.close()
 
-                // সফলভাবে সেন্ড হওয়ার পর UI আপডেট
+                // সফলভাবে রেসপন্স রিসিভ করার পর UI আপডেট
                 runOnUiThread {
-                    statusText.text = "STATUS: EXECUTED [$command]"
-                    statusText.setTextColor(Color.parseColor("#00FF66")) // Green
+                    if (response != null) {
+                        statusText.text = "RESULT: $response"
+                        statusText.setTextColor(Color.parseColor("#00FF66")) // Green
+                    } else {
+                        statusText.text = "STATUS: EXECUTED [$command] (No data returned)"
+                        statusText.setTextColor(Color.parseColor("#00E5FF")) // Cyan
+                    }
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
                 // কানেকশন ফেইল করলে UI আপডেট
                 runOnUiThread {
-                    statusText.text = "STATUS: CONNECTION FAILED"
+                    statusText.text = "STATUS: CONNECTION FAILED (${e.localizedMessage})"
                     statusText.setTextColor(Color.parseColor("#FF3333")) // Red
                 }
             }
