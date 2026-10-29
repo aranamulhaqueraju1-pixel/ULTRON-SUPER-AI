@@ -25,13 +25,17 @@ jobs:
       uses: gradle/actions/setup-gradle@v3
 
     - name: Build Debug APK with Gradle
-      run: gradle build
+      run: gradle assembleDebug
+
+    - name: Verify APK file location
+      run: find . -name "*.apk"
 
     - name: Upload APK to Release
       uses: softprops/action-gh-release@v1
       with:
         files: |
           app/build/outputs/apk/debug/*.apk
+          **/build/outputs/apk/debug/*.apk
         tag_name: v1.0.${{ github.run_number }}
         name: Ultron AI Build v1.0.${{ github.run_number }}
         draft: false
