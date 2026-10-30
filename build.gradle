@@ -61,10 +61,3 @@ android {
         jvmTarget = '17'
     }
 }
-
-// Gradle 8.x এর ইমপ্লিসিট ডিপেন্ডেন্সি এবং টাস্ক ভ্যালিডেশন এরর চিরতরে বন্ধ করার জন্য:
-gradle.startParameter.continueOnFailure = true
-
-tasks.withType(OrgJetbrainsKotlinGradleTasksKOTask.class).configureEach {
-    it.usesService(null)
-}
