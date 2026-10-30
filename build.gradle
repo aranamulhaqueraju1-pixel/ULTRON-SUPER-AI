@@ -61,3 +61,10 @@ android {
         jvmTarget = '17'
     }
 }
+
+// Task ordering fix for Gradle 8.x implicit dependency validation
+tasks.matching { it.name == 'compileDebugKotlin' }.configureEach {
+    it.mustRunAfter(':desugarDebugFileDependencies')
+    it.mustRunAfter(':mergeLibDexDebug')
+    it.mustRunAfter(':checkDebugDuplicateClasses')
+}
