@@ -1,49 +1,36 @@
 name: Build ULTRON APK
 
-on: [push]
+on:
+  push:
+    branches: [ "main", "master" ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-      
-      - uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-          
-      - uses: gradle/actions/setup-gradle@v3
-        with:
-          gradle-version: 8.5
-          
-      - name: Make gradlew executable
-        run: chmod +x ./gradlew || gradle wrapper
-        
-      - name: Build APK with Gradle
-        run: ./gradlew assembleDebug
-        
-      - name: Locate and Show APK Path
-        run: |
-          echo "Searching for APKs..."
-          find . -name "*.apk"
-        
-      - name: Upload APK Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ULTRON-APK
-          path: |
-            build/outputs/apk/debug/*.apk
-            **/*.apk
-          if-no-files-found: error
-          
-      - name: Create Release and Upload APK
-        uses: ncipollo/release-action@v1
-        with:
-          tag: v1.0.${{ github.run_number }}
-          name: Release Build #${{ github.run_number }}
-          artifacts: |
-            build/outputs/apk/debug/*.apk
-            **/*.apk
-          allowUpdates: true
-          token: ${{ secrets.GITHUB_TOKEN }}
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+
+    - name: Setup Gradle (7.6.3)
+      uses: gradle/actions/setup-gradle@v3
+      with:
+        gradle-version: '7.6.3'
+
+    - name: Make gradlew executable
+      run: chmod +x gradlew || true
+
+    - name: Build APK with Gradle
+      run: ./gradlew assembleDebug --stacktrace
+
+    - name: Upload APK Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ULTRON-APK
+        path: build/outputs/apk/debug/*.apk
