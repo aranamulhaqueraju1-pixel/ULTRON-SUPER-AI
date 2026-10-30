@@ -20,19 +20,27 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x ./gradlew || gradle wrapper
         
-      - name: Check Gradle Tasks and Build
+      - name: Build APK with Gradle
         run: |
-          ./gradlew tasks --all
-          ./gradlew assembleDebug || ./gradlew build
+          if [ -d "app" ]; then
+            ./gradlew :app:assembleDebug
+          else
+            ./gradlew assembleDebug || ./gradlew build
+          fi
+          
+      - name: Locate and Show APK Path
+        run: |
+          echo "Searching for APKs..."
+          find . -name "*.apk"
         
-      - uses: actions/upload-artifact@v4
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
         with:
           name: ULTRON-APK
           path: |
-            app/build/outputs/apk/debug/app-debug.apk
-            build/outputs/apk/debug/app-debug.apk
+            **/build/outputs/apk/debug/*.apk
             **/*.apk
-          if-no-files-found: ignore
+          if-no-files-found: error
           
       - name: Create Release and Upload APK
         uses: ncipollo/release-action@v1
@@ -40,7 +48,7 @@ jobs:
           tag: v1.0.${{ github.run_number }}
           name: Release Build #${{ github.run_number }}
           artifacts: |
-            app/build/outputs/apk/debug/app-debug.apk
-            build/outputs/apk/debug/app-debug.apk
+            **/build/outputs/apk/debug/*.apk
+            **/*.apk
           allowUpdates: true
           token: ${{ secrets.GITHUB_TOKEN }}
