@@ -27,7 +27,8 @@ jobs:
     - name: Generate Gradle Wrapper & Build APK
       run: |
         gradle wrapper
-        ./gradlew assembleDebug
+        chmod +x ./gradlew
+        ./gradlew :app:assembleDebug
 
     - name: Upload APK to Release
       uses: softprops/action-gh-release@v1
