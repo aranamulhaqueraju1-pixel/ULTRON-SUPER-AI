@@ -20,13 +20,16 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x ./gradlew || gradle wrapper
         
-      - name: Build APK with Gradle
-        run: ./gradlew assembleDebug
+      - name: Check Gradle Tasks and Build
+        run: |
+          ./gradlew tasks --all
+          ./gradlew assembleDebug || ./gradlew build
         
       - uses: actions/upload-artifact@v4
         with:
           name: ULTRON-APK
           path: |
+            app/build/outputs/apk/debug/app-debug.apk
             build/outputs/apk/debug/app-debug.apk
             **/*.apk
           if-no-files-found: ignore
@@ -37,6 +40,7 @@ jobs:
           tag: v1.0.${{ github.run_number }}
           name: Release Build #${{ github.run_number }}
           artifacts: |
+            app/build/outputs/apk/debug/app-debug.apk
             build/outputs/apk/debug/app-debug.apk
           allowUpdates: true
           token: ${{ secrets.GITHUB_TOKEN }}
