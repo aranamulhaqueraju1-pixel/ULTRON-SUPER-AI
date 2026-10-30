@@ -18,13 +18,17 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
 
-    - name: Setup Gradle (7.6.3)
+    - name: Setup Gradle
       uses: gradle/actions/setup-gradle@v3
-      with:
-        gradle-version: '7.6.3'
+
+    - name: Generate Gradle Wrapper
+      run: gradle wrapper --gradle-version 7.6.3
+
+    - name: Make gradlew executable
+      run: chmod +x gradlew
 
     - name: Build APK with Gradle
-      run: gradle assembleDebug --stacktrace
+      run: ./gradlew assembleDebug --stacktrace
 
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
