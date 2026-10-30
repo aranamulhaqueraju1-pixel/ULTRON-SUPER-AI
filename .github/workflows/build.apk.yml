@@ -23,11 +23,8 @@ jobs:
       with:
         gradle-version: '7.6.3'
 
-    - name: Make gradlew executable
-      run: chmod +x gradlew || true
-
     - name: Build APK with Gradle
-      run: ./gradlew assembleDebug --stacktrace
+      run: gradle assembleDebug --stacktrace
 
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
