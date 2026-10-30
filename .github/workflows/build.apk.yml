@@ -21,13 +21,8 @@ jobs:
         run: chmod +x ./gradlew || gradle wrapper
         
       - name: Build APK with Gradle
-        run: |
-          if [ -d "app" ]; then
-            ./gradlew :app:assembleDebug
-          else
-            ./gradlew assembleDebug || ./gradlew build
-          fi
-          
+        run: ./gradlew assembleDebug
+        
       - name: Locate and Show APK Path
         run: |
           echo "Searching for APKs..."
@@ -38,7 +33,7 @@ jobs:
         with:
           name: ULTRON-APK
           path: |
-            **/build/outputs/apk/debug/*.apk
+            build/outputs/apk/debug/*.apk
             **/*.apk
           if-no-files-found: error
           
@@ -48,7 +43,7 @@ jobs:
           tag: v1.0.${{ github.run_number }}
           name: Release Build #${{ github.run_number }}
           artifacts: |
-            **/build/outputs/apk/debug/*.apk
+            build/outputs/apk/debug/*.apk
             **/*.apk
           allowUpdates: true
           token: ${{ secrets.GITHUB_TOKEN }}
