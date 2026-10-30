@@ -27,12 +27,8 @@ jobs:
         chmod +x ./gradlew
         ./gradlew build || echo "Gradle build attempted"
 
-    - name: Upload Artifacts
+    - name: Upload Entire Project Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: Ultron-Files
-        path: |
-          **/*.apk
-          **/build/outputs/**/*.apk
-          app/build/outputs/
-          build/
+        name: Ultron-Project-Files
+        path: .
