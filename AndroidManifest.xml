@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.ultron.superai">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!-- Internet & Network Permissions for PC Bridge Socket Communication -->
     <uses-permission android:name="android.permission.INTERNET" />
@@ -24,8 +23,8 @@
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="intent.action.MAIN" />
+                <category android:name="intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
@@ -35,7 +34,6 @@
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="dataSync" />
-
     </application>
 
 </manifest>
