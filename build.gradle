@@ -1,23 +1,7 @@
-buildscript {
-    repositories {
-        google()
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:8.1.0'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.0"
-    }
+plugins {
+    id 'com.android.application' version '8.1.0'
+    id 'org.jetbrains.kotlin.android' version '1.9.0'
 }
-
-allprojects {
-    repositories {
-        google()
-        mavenCentral()
-    }
-}
-
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
 
 android {
     namespace 'com.ultron.core'
@@ -60,11 +44,4 @@ android {
     kotlinOptions {
         jvmTarget = '17'
     }
-}
-
-// Task ordering fix for Gradle 8.x implicit dependency validation
-tasks.matching { it.name == 'compileDebugKotlin' }.configureEach {
-    it.mustRunAfter(':desugarDebugFileDependencies')
-    it.mustRunAfter(':mergeLibDexDebug')
-    it.mustRunAfter(':checkDebugDuplicateClasses')
 }
