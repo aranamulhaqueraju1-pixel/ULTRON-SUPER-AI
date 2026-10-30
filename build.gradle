@@ -20,11 +20,11 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 android {
-    namespace 'com.ultron.super'
+    namespace 'com.ultron.core'
     compileSdk 34
 
     defaultConfig {
-        applicationId 'com.ultron.super'
+        applicationId 'com.ultron.core'
         minSdk 24
         targetSdk 34
         versionCode 1
