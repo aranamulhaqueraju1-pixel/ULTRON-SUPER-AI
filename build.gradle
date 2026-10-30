@@ -34,7 +34,7 @@ android {
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'
-            java.srcDirs = ['src']
+            java.srcDirs = ['.']
             res.srcDirs = ['res']
             assets.srcDirs = ['assets']
         }
