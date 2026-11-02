@@ -23,9 +23,10 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var ultronSpeech: TextView
     private lateinit var ivCentralBrain: ImageView
+    private lateinit var tvDailyLog: TextView
     private lateinit var securityBrain: UltronSecurityBrain
     private lateinit var tradingEngine: UltronTradingEngine
-        
+      
     private val SPEECH_REQUEST_CODE = 100
     private var isAutoTradeActive = false // Stealth & Auto Trade switch
 
@@ -38,8 +39,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // UI Views Initialization & ID Mapping
         ultronSpeech = findViewById(R.id.ultronSpeech)
-        ivCentralBrain = findViewById(R.id.ivCentralBrain) // লেআউটে সেন্ট্রাল ব্রেন ইমেজ আইডি থাকতে হবে
+        ivCentralBrain = findViewById(R.id.ivCentralBrain)
+        tvDailyLog = findViewById(R.id.tvDailyLog)
         val micButton = findViewById<ImageView>(R.id.micButton)
 
         // 1. Start Central Holographic Brain Rotation Animation
@@ -53,8 +56,9 @@ class MainActivity : AppCompatActivity() {
         val serviceIntent = Intent(this, UltronBackgroundService::class.java)
         startService(serviceIntent)
 
-        // 2. Initialize Daily Learning Log Entry on startup
+        // 2. Initialize Daily Learning Log Entry on startup & show on UI
         appendLearningLog(this, "System Boot: ৬৪টি সিস্টেম, ১০০টি ট্রেডিং ব্রেন ও ডেইলি মনিটরিং সক্রিয়।")
+        tvDailyLog.text = readLearningLog(this)
 
         ultronSpeech.text = "আসসালামু আলাইকুম, বস! ৬৪টি সিস্টেম, ১০০টি ট্রেডিং ব্রেন, পিসি সকেট ও ব্যাকগ্রাউন্ড সার্ভিস সক্রিয়। বলুন, কী করতে হবে?"
 
@@ -104,7 +108,7 @@ class MainActivity : AppCompatActivity() {
     private fun processUltronSupremeCommand(command: String) {
         ultronSpeech.text = "হুকুম পেয়েছি, বস: \"$command\""
         
-        // Save command interaction into Daily Learning Log
+        // Save command interaction into Daily Learning Log & update UI
         appendLearningLog(this, "Voice Command Executed: $command")
 
         when {
@@ -190,7 +194,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     // ---------------------------------------------------------
-    // 3. Daily Learning Log File Management (ultron_learning_log.txt)
+    // Daily Learning Log File Management & UI Real-time Binding
     // ---------------------------------------------------------
 
     private fun appendLearningLog(context: Context, newEntry: String) {
@@ -202,6 +206,10 @@ class MainActivity : AppCompatActivity() {
         
         try {
             file.appendText(logData)
+            // Real-time UI Update on Daily Log View
+            if (::tvDailyLog.isInitialized) {
+                tvDailyLog.text = readLearningLog(context)
+            }
         } catch (e: Exception) {
             e.printStackTrace()
         }
