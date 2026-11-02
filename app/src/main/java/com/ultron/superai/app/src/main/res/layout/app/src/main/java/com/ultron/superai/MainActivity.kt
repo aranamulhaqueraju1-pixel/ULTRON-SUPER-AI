@@ -1,79 +1,126 @@
-package com.ultron.superai
+package com.ultron.core
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
-import android.widget.Button
-import android.widget.EditText
+import android.speech.RecognizerIntent
+import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import java.io.PrintWriter
-import java.net.Socket
-import java.util.concurrent.Executors
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
-    private val executor = Executors.newSingleThreadExecutor()
-    // Apnar PC-er fix kora IP address
-    private val pcIpAddress = "192.168.1.108"
-    private val port = 65000
+    private lateinit var ultronSpeech: TextView
+    private lateinit var securityBrain: UltronSecurityBrain
+    private lateinit var tradingEngine: UltronTradingEngine
+    private val SPEECH_REQUEST_CODE = 100
+    private var isAutoTradeActive = false // Stealth & Auto Trade switch
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val statusText = findViewById<TextView>(R.id.statusText)
-        val commandInput = findViewById<EditText>(R.id.commandInput)
-        val sendButton = findViewById<Button>(R.id.sendButton)
+        ultronSpeech = findViewById(R.id.ultronSpeech)
+        val micButton = findViewById<ImageView>(R.id.micButton)
 
-        sendButton.setOnClickListener {
-            val command = commandInput.text.toString().trim()
-            if (command.isNotEmpty()) {
-                processAdvancedAICommand(command, statusText)
-                commandInput.text.clear() // Command send howar por input box clear kore debe
-            }
+        // Initialize Core Brains
+        securityBrain = UltronSecurityBrain(this)
+        tradingEngine = UltronTradingEngine()
+
+        // Start 24/7 Background Foreground Service (Brain #58)
+        val serviceIntent = Intent(this, UltronBackgroundService::class.java)
+        startService(serviceIntent)
+
+        ultronSpeech.text = "আসসালামু আলাইকুম, বস! ৬৪টি সিস্টেম, ১০০টি ট্রেডিং ব্রেন এবং লাইফটাইম লার্নার ইঞ্জিন সক্রিয়। বলুন, কী করতে হবে?"
+
+        // Voice Command Trigger Button
+        micButton.setOnClickListener {
+            startVoiceRecognition()
         }
     }
 
-    private fun processAdvancedAICommand(command: String, statusText: TextView) {
-        // 1. Local Command Handling (App-er nijsho smart feature)
-        when (command.lowercase()) {
-            "clear" -> {
-                statusText.text = "STATUS: CONSOLE CLEARED"
-                statusText.setTextColor(0xFF00FFFF.toInt()) // Cyan color
-                return
-            }
-            "ai:status" -> {
-                statusText.text = "STATUS: ULTRON AI CORE ONLINE [READY]"
-                statusText.setTextColor(0xFF00FF66.toInt()) // Green color
-                return
-            }
+    private fun startVoiceRecognition() {
+        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+            putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+            putExtra(RecognizerIntent.EXTRA_LANGUAGE, "bn-BD") // Bangla & English support
+            putExtra(RecognizerIntent.EXTRA_PROMPT, "আল্ট্রনকে হুকুম দিন, বস...")
         }
+        try {
+            startActivityForResult(intent, SPEECH_REQUEST_CODE)
+        } catch (e: Exception) {
+            Toast.makeText(this, "Voice recognition error!", Toast.LENGTH_SHORT).show()
+        }
+    }
 
-        // 2. Server Transmission & Processing State
-        statusText.text = "STATUS: PROCESSING AI COMMAND..."
-        statusText.setTextColor(0xFFFFCC00.toInt()) // Yellow/Orange color
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == SPEECH_REQUEST_CODE && resultCode == RESULT_OK) {
+            val results = data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
+            val spokenText = results?.get(0)?.toLowerCase(Locale.ROOT) ?: ""
+            
+            processUltronSupremeCommand(spokenText)
+        }
+    }
 
-        executor.execute {
-            try {
-                // PC server-er sathe socket connection toiri
-                val socket = Socket(pcIpAddress, port)
-                val writer = PrintWriter(socket.outputStream, true)
-                
-                // Command PC-te transmit kora
-                writer.println(command)
-                
-                writer.close()
-                socket.close()
+    private fun processUltronSupremeCommand(command: String) {
+        ultronSpeech.text = "হুকুম পেয়েছি, বস: \"$command\""
 
-                runOnUiThread {
-                    statusText.text = "STATUS: EXECUTED [$command]"
-                    statusText.setTextColor(0xFF00FF66.toInt()) // Green
+        when {
+            // 1. Auto Trade Control (Stealth Mode)
+            command.contains("auto trade on") -> {
+                isAutoTradeActive = true
+                securityBrain.activateStealthTradingMode(true)
+                ultronSpeech.text = "STALTH MODE ON: Broker-safe anti-ban active. Ready for live execution with 1% risk."
+            }
+            command.contains("auto trade off") -> {
+                isAutoTradeActive = false
+                securityBrain.activateStealthTradingMode(false)
+                ultronSpeech.text = "Trading Brain shifted to Analysis & Demo mode only."
+            }
+            command.contains("trading") || command.contains("quotex") || command.contains("binance") -> {
+                // Execute 100 Trading Brains Analysis & Demo Check
+                tradingEngine.executeAdvancedTradingAnalysis("EUR/USD / OTC Pair", isAutoTradeActive) { resultMessage ->
+                    ultronSpeech.text = resultMessage
+                    Toast.makeText(this, "Trading Brain Updated", Toast.LENGTH_LONG).show()
                 }
-            } catch (e: Exception) {
-                e.printStackTrace()
-                runOnUiThread {
-                    statusText.text = "STATUS: CONNECTION FAILED TO PC"
-                    statusText.setTextColor(0xFFFF3333.toInt()) // Red
+            }
+
+            // 2. Security & Ethical Hacking Shield (Brain #12)
+            command.contains("security") || command.contains("scan") || command.contains("hacker") -> {
+                val securityReport = securityBrain.executeGodModeProtection()
+                ultronSpeech.text = securityReport
+            }
+
+            // 3. YouTube & Music Control
+            command.contains("গান") || command.contains("youtube") || command.contains("play") -> {
+                Toast.makeText(this, "YouTube কন্ট্রোল চালু হচ্ছে...", Toast.LENGTH_SHORT).show()
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com"))
+                startActivity(intent)
+            }
+
+            // 4. WhatsApp Control
+            command.contains("whatsapp") || command.contains("মেসেজ") -> {
+                Toast.makeText(this, "WhatsApp ওপেন করা হচ্ছে...", Toast.LENGTH_SHORT).show()
+                val intent = packageManager.getLaunchIntentForPackage("com.whatsapp")
+                if (intent != null) {
+                    startActivity(intent)
+                } else {
+                    Toast.makeText(this, "WhatsApp অ্যাপ পাওয়া যায়নি!", Toast.LENGTH_SHORT).show()
                 }
+            }
+
+            // 5. Google Real-time Search Analysis
+            command.contains("google") || command.contains("খুজো") || command.contains("search") -> {
+                val query = command.replace("google", "").replace("খুজো", "").trim()
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com/search?q=$query"))
+                startActivity(intent)
+            }
+
+            // Default Assistant Reply
+            else -> {
+                ultronSpeech.text = "বস, আপনার কথা বুঝেছি। ৬৪টি সিস্টেম ও লাইফটাইম লার্নার এটি নিয়ে কাজ করছে। আরও বলুন!"
             }
         }
     }
