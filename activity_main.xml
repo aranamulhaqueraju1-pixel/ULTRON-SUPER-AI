@@ -1,54 +1,110 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#050505"
-    android:orientation="vertical"
+    android:background="#060913"
     android:padding="16dp">
 
-    <!-- Header Title -->
+    <!-- Top Header -->
     <TextView
-        android:layout_width="match_parent"
+        android:id="@+id/headerTitle"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="[ ULTRON SUPER AI ]"
-        android:textColor="#00FF66"
-        android:textSize="22sp"
+        android:layout_centerHorizontal="true"
+        android:text="ULTRON SUPER AI"
+        android:textColor="#00FFCC"
+        android:textSize="18sp"
         android:textStyle="bold"
+        android:letterSpacing="0.2"/>
+
+    <!-- Core Assistant Dialog Box (1st Brain) -->
+    <LinearLayout
+        android:id="@+id/assistantBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/headerTitle"
+        android:layout_marginTop="40dp"
+        android:background="#121C2E"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="[ Personal Assistant - Core Brain 1 ]"
+            android:textColor="#00BFFF"
+            android:textSize="12sp"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/ultronSpeech"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="আসসালামু আলাইকুম, বস! আল্ট্রন প্রস্তুত। বলুন, কী করতে হবে এখন?"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"/>
+    </LinearLayout>
+
+    <!-- System Status Monitor -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/assistantBox"
+        android:layout_marginTop="20dp"
+        android:background="#0D1322"
+        android:orientation="vertical"
+        android:padding="12dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="CORE 16 BRAIN: সক্রিয় (Active)"
+            android:textColor="#00FF66"
+            android:textSize="13sp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="TRADING BRAIN: স্ট্যান্ডবাই (Standby)"
+            android:textColor="#FFCC00"
+            android:textSize="13sp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="SECURITY SHIELD: অনলাইন (Online)"
+            android:textColor="#00BFFF"
+            android:textSize="13sp"/>
+    </LinearLayout>
+
+    <!-- Bottom Voice & Action Panel -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:gravity="center"
-        android:layout_marginTop="24dp"
-        android:layout_marginBottom="16dp"/>
+        android:orientation="vertical"
+        android:paddingBottom="20dp">
 
-    <!-- Status Display -->
-    <TextView
-        android:id="@+id/statusText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="STATUS: DISCONNECTED"
-        android:textColor="#FF3333"
-        android:textSize="14sp"
-        android:gravity="center"
-        android:layout_marginBottom="24dp"/>
+        <ImageView
+            android:id="@+id/micButton"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:background="#00FFCC"
+            android:padding="16qs"
+            android:src="@android:drawable/ic_btn_speak_now"
+            android:elevation="8dp"/>
 
-    <!-- Command Input Box -->
-    <EditText
-        android:id="@+id/commandInput"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Enter command (e.g., youtube)"
-        android:textColor="#FFFFFF"
-        android:textColorHint="#555555"
-        android:background="#111111"
-        android:padding="12dp"
-        android:layout_marginBottom="16dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="বলুন: 'আল্ট্রন'"
+            android:textColor="#8A99AD"
+            android:textSize="12sp"/>
+    </LinearLayout>
 
-    <!-- Send Button -->
-    <Button
-        android:id="@+id/sendButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="TRANSMIT COMMAND"
-        android:backgroundTint="#00FF66"
-        android:textColor="#000000"
-        android:textStyle="bold"/>
-
-</LinearLayout>
+</RelativeLayout>
