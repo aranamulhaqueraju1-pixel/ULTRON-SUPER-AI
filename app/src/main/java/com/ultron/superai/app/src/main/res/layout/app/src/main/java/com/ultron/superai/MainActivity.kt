@@ -1,24 +1,31 @@
 package com.ultron.core
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.speech.RecognizerIntent
+import android.view.animation.Animation
+import android.view.animation.LinearInterpolator
+import android.view.animation.RotateAnimation
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import java.io.File
 import java.io.PrintWriter
 import java.net.Socket
-import java.util.concurrent.Executors
+import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.Executors
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var ultronSpeech: TextView
+    private lateinit var ivCentralBrain: ImageView
     private lateinit var securityBrain: UltronSecurityBrain
     private lateinit var tradingEngine: UltronTradingEngine
-    
+        
     private val SPEECH_REQUEST_CODE = 100
     private var isAutoTradeActive = false // Stealth & Auto Trade switch
 
@@ -32,7 +39,11 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         ultronSpeech = findViewById(R.id.ultronSpeech)
+        ivCentralBrain = findViewById(R.id.ivCentralBrain) // লেআউটে সেন্ট্রাল ব্রেন ইমেজ আইডি থাকতে হবে
         val micButton = findViewById<ImageView>(R.id.micButton)
+
+        // 1. Start Central Holographic Brain Rotation Animation
+        startBrainRotation()
 
         // Initialize Core Brains
         securityBrain = UltronSecurityBrain(this)
@@ -42,12 +53,29 @@ class MainActivity : AppCompatActivity() {
         val serviceIntent = Intent(this, UltronBackgroundService::class.java)
         startService(serviceIntent)
 
+        // 2. Initialize Daily Learning Log Entry on startup
+        appendLearningLog(this, "System Boot: ৬৪টি সিস্টেম, ১০০টি ট্রেডিং ব্রেন ও ডেইলি মনিটরিং সক্রিয়।")
+
         ultronSpeech.text = "আসসালামু আলাইকুম, বস! ৬৪টি সিস্টেম, ১০০টি ট্রেডিং ব্রেন, পিসি সকেট ও ব্যাকগ্রাউন্ড সার্ভিস সক্রিয়। বলুন, কী করতে হবে?"
 
         // Voice Command Trigger Button
         micButton.setOnClickListener {
             startVoiceRecognition()
         }
+    }
+
+    // Central Brain Rotation Animation Logic
+    private fun startBrainRotation() {
+        val rotateAnimation = RotateAnimation(
+            0f, 360f,
+            Animation.RELATIVE_TO_SELF, 0.5f,
+            Animation.RELATIVE_TO_SELF, 0.5f
+        ).apply {
+            duration = 4000
+            repeatCount = Animation.INFINITE
+            interpolator = LinearInterpolator()
+        }
+        ivCentralBrain.startAnimation(rotateAnimation)
     }
 
     private fun startVoiceRecognition() {
@@ -68,13 +96,16 @@ class MainActivity : AppCompatActivity() {
         if (requestCode == SPEECH_REQUEST_CODE && resultCode == RESULT_OK) {
             val results = data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
             val spokenText = results?.get(0)?.toLowerCase(Locale.ROOT) ?: ""
-            
+                      
             processUltronSupremeCommand(spokenText)
         }
     }
 
     private fun processUltronSupremeCommand(command: String) {
         ultronSpeech.text = "হুকুম পেয়েছি, বস: \"$command\""
+        
+        // Save command interaction into Daily Learning Log
+        appendLearningLog(this, "Voice Command Executed: $command")
 
         when {
             // 1. Auto Trade Control (Stealth Mode)
@@ -155,6 +186,35 @@ class MainActivity : AppCompatActivity() {
                 e.printStackTrace()
                 // If PC is offline, local 64 brains handle everything seamlessly without crashing
             }
+        }
+    }
+
+    // ---------------------------------------------------------
+    // 3. Daily Learning Log File Management (ultron_learning_log.txt)
+    // ---------------------------------------------------------
+
+    private fun appendLearningLog(context: Context, newEntry: String) {
+        val fileName = "ultron_learning_log.txt"
+        val file = File(context.filesDir, fileName)
+        
+        val currentDate = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault()).format(Date())
+        val logData = "[$currentDate] - $newEntry\n"
+        
+        try {
+            file.appendText(logData)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun readLearningLog(context: Context): String {
+        val fileName = "ultron_learning_log.txt"
+        val file = File(context.filesDir, fileName)
+        
+        return if (file.exists()) {
+            file.readText()
+        } else {
+            "কোনো লার্নিং ডাটা পাওয়া যায়নি।"
         }
     }
 }
