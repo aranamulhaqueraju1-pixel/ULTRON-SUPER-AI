@@ -11,19 +11,19 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:text="ULTRON SUPER AI"
+        android:text="ULTRON SUPER AI - SUPREME MODE"
         android:textColor="#00FFCC"
-        android:textSize="18sp"
+        android:textSize="16sp"
         android:textStyle="bold"
-        android:letterSpacing="0.2"/>
+        android:letterSpacing="0.1"/>
 
-    <!-- Core Assistant Dialog Box (1st Brain) -->
+    <!-- Core Assistant & Real-time Output Box -->
     <LinearLayout
         android:id="@+id/assistantBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/headerTitle"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="20dp"
         android:background="#121C2E"
         android:orientation="vertical"
         android:padding="16dp">
@@ -31,7 +31,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="[ Personal Assistant - Core Brain 1 ]"
+            android:text="[ ULTRON Live Analysis & Execution Core ]"
             android:textColor="#00BFFF"
             android:textSize="12sp"
             android:textStyle="bold"/>
@@ -41,9 +41,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="আসসালামু আলাইকুম, বস! আল্ট্রন প্রস্তুত। বলুন, কী করতে হবে এখন?"
+            text="আসসালামু আলাইকুম, বস! আমি প্রস্তুত। YouTube গান চালানো, WhatsApp মেসেজ পাঠানো, Google সার্চ বা অ্যাপ ইনস্টল—সব হুকুম পালন করতে আমি রেডি।"
             android:textColor="#FFFFFF"
-            android:textSize="16sp"/>
+            android:textSize="15sp"/>
     </LinearLayout>
 
     <!-- System Status Monitor -->
@@ -51,7 +51,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/assistantBox"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="15dp"
         android:background="#0D1322"
         android:orientation="vertical"
         android:padding="12dp">
@@ -59,25 +59,17 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="CORE 16 BRAIN: সক্রিয় (Active)"
+            text="64 SYSTEMS & 100 TRADING BRAINS: Active & Monitoring"
             android:textColor="#00FF66"
-            android:textSize="13sp"/>
+            android:textSize="12sp"/>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="TRADING BRAIN: স্ট্যান্ডবাই (Standby)"
-            android:textColor="#FFCC00"
-            android:textSize="13sp"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="SECURITY SHIELD: অনলাইন (Online)"
+            text="STEALTH MODE & VOICE ENGINE: Online"
             android:textColor="#00BFFF"
-            android:textSize="13sp"/>
+            android:textSize="12sp"/>
     </LinearLayout>
 
     <!-- Bottom Voice & Action Panel -->
@@ -94,7 +86,7 @@
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:background="#00FFCC"
-            android:padding="16qs"
+            android:padding="16dp"
             android:src="@android:drawable/ic_btn_speak_now"
             android:elevation="8dp"/>
 
@@ -102,7 +94,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="বলুন: 'আল্ট্রন'"
+            text="মাইক্রোফোনে ক্লিক করে হুকুম দিন, বস!"
             android:textColor="#8A99AD"
             android:textSize="12sp"/>
     </LinearLayout>
