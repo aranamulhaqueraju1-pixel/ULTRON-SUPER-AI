@@ -32,7 +32,7 @@ jobs:
         echo "Ultron Supreme AI Elite UI & Daily Learning Log Integration Active"
 
     - name: Build APK with Wrapper
-      run: ./gradlew assembleDebug --stacktrace
+      run: ./gradlew assembleDebug --refresh-dependencies --stacktrace
 
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
