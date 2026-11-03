@@ -19,20 +19,17 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
 
-    - name: Setup Gradle (Fixed Version)
+    - name: Setup Gradle
       uses: gradle/actions/setup-gradle@v3
       with:
         gradle-version: '8.5'
-
-    - name: Generate Gradle Wrapper
-      run: gradle wrapper
 
     - name: Prepare Dashboard Resources & Daily Learning Log
       run: |
         echo "Ultron Supreme AI Elite UI & Daily Learning Log Integration Active"
 
-    - name: Build APK with Wrapper
-      run: ./gradlew assembleDebug --refresh-dependencies --stacktrace
+    - name: Build APK Directly
+      run: gradle assembleDebug --refresh-dependencies --stacktrace
 
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
