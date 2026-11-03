@@ -24,13 +24,15 @@ jobs:
       with:
         gradle-version: '8.5'
 
+    - name: Generate Gradle Wrapper
+      run: gradle wrapper
+
     - name: Prepare Dashboard Resources & Daily Learning Log
       run: |
-        # App er layout ebong daily monitoring file setup er jonno extra commands (jodi thake)
         echo "Ultron Supreme AI Elite UI & Daily Learning Log Integration Active"
 
-    - name: Build APK Directly
-      run: gradle assembleDebug --stacktrace
+    - name: Build APK with Wrapper
+      run: ./gradlew assembleDebug --stacktrace
 
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
