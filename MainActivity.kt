@@ -47,7 +47,7 @@ class MainActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == SPEECH_REQUEST_CODE && resultCode == RESULT_OK) {
             val results = data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
-            val spokenText = results?.get(0)?.toLowerCase(Locale.ROOT) ?: ""
+            val spokenText = results?.get(0)?.lowercase(Locale.ROOT) ?: ""
             
             processUltronCommand(spokenText)
         }
