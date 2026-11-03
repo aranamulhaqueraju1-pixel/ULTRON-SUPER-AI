@@ -24,12 +24,15 @@ jobs:
       with:
         gradle-version: '8.5'
 
-    - name: Prepare Dashboard Resources & Daily Learning Log
+    - name: Create Gradle Wrapper Manually
       run: |
-        echo "Ultron Supreme AI Elite UI & Daily Learning Log Integration Active"
+        gradle wrapper --gradle-version 8.5
 
-    - name: Build APK Directly
-      run: gradle assembleDebug --refresh-dependencies --stacktrace
+    - name: Make gradlew executable
+      run: chmod +x gradlew
+
+    - name: Build APK using Wrapper
+      run: ./gradlew assembleDebug --stacktrace
 
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
