@@ -24,20 +24,6 @@ jobs:
       with:
         gradle-version: '8.5'
 
-    - name: Prepare Project Structure
-      run: |
-        # Ensure proper settings.gradle exists
-        echo "include ':app'" > settings.gradle
-        
-        # Ensure app directory exists and move loose files inside if needed
-        mkdir -p app/src/main
-        
-        # Move files to app directory if they are sitting in root
-        [ -f AndroidManifest.xml ] && cp AndroidManifest.xml app/src/main/ || true
-        [ -d res ] && cp -r res app/src/main/ || true
-        [ -d assets ] && cp -r assets app/src/main/ || true
-        [ -d src ] && cp -r src/* app/src/main/ || true
-
     - name: Build Debug APK
       run: gradle :app:assembleDebug --stacktrace
 
@@ -45,6 +31,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: ULTRON-APK
-        path: |
-          app/build/outputs/apk/debug/*.apk
-          **/build/outputs/apk/debug/*.apk
+        path: app/build/outputs/apk/debug/*.apk
