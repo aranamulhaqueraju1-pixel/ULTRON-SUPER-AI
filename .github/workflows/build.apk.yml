@@ -24,20 +24,13 @@ jobs:
       with:
         gradle-version: '8.5'
 
-    - name: Ensure settings.gradle Exists
-      run: |
-        if [ ! -f settings.gradle ]; then
-          echo 'rootProject.name = "ULTRON-SUPER-AI"' > settings.gradle
-          echo "include '.'" >> settings.gradle
-        fi
-
-    - name: Build Debug APK with Full Error Trace
-      run: gradle assembleDebug --stacktrace --info || gradle assembleDebug --debug
+    - name: Build Debug APK via App Module
+      run: gradle :app:assembleDebug --stacktrace
 
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
       with:
         name: ULTRON-APK
         path: |
-          build/outputs/apk/debug/*.apk
+          app/build/outputs/apk/debug/*.apk
           **/build/outputs/apk/debug/*.apk
