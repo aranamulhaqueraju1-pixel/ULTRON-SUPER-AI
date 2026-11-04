@@ -24,7 +24,14 @@ jobs:
       with:
         gradle-version: '8.5'
 
-    - name: Build Debug APK
+    - name: Ensure settings.gradle Exists
+      run: |
+        if [ ! -f settings.gradle ]; then
+          echo 'rootProject.name = "ULTRON-SUPER-AI"' > settings.gradle
+          echo "include '.'" >> settings.gradle
+        fi
+
+    - name: Build Debug APK Cleanly
       run: gradle assembleDebug --stacktrace
 
     - name: Upload APK Artifact
