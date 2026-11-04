@@ -31,8 +31,8 @@ jobs:
           echo "include '.'" >> settings.gradle
         fi
 
-    - name: Build Debug APK with Full Debug Logs
-      run: gradle assembleDebug --info --stacktrace
+    - name: Build Debug APK with Full Error Trace
+      run: gradle assembleDebug --stacktrace --info || gradle assembleDebug --debug
 
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
