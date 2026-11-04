@@ -24,7 +24,21 @@ jobs:
       with:
         gradle-version: '8.5'
 
-    - name: Build Debug APK via App Module
+    - name: Prepare Project Structure
+      run: |
+        # Ensure proper settings.gradle exists
+        echo "include ':app'" > settings.gradle
+        
+        # Ensure app directory exists and move loose files inside if needed
+        mkdir -p app/src/main
+        
+        # Move files to app directory if they are sitting in root
+        [ -f AndroidManifest.xml ] && cp AndroidManifest.xml app/src/main/ || true
+        [ -d res ] && cp -r res app/src/main/ || true
+        [ -d assets ] && cp -r assets app/src/main/ || true
+        [ -d src ] && cp -r src/* app/src/main/ || true
+
+    - name: Build Debug APK
       run: gradle :app:assembleDebug --stacktrace
 
     - name: Upload APK Artifact
