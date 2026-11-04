@@ -15,15 +15,6 @@ android {
         versionName "1.0"
     }
 
-    sourceSets {
-        main {
-            manifest.srcFile 'AndroidManifest.xml'
-            java.srcDirs = ['src/main/java', 'src']
-            res.srcDirs = ['src/main/res', 'res']
-            assets.srcDirs = ['src/main/assets', 'assets']
-        }
-    }
-
     buildTypes {
         release {
             minifyEnabled false
@@ -42,4 +33,10 @@ android {
     kotlinOptions {
         jvmTarget = '17'
     }
+}
+
+dependencies {
+    implementation 'androidx.core:core-ktx:1.12.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.9.0'
 }
