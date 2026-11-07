@@ -1,4 +1,4 @@
-ackage com.ultron.core
+package com.ultron.superai
 
 import android.content.Context
 import android.widget.Toast
@@ -49,4 +49,3 @@ class UltronSecurityBrain(private val context: Context) {
         }
     }
 }
-
