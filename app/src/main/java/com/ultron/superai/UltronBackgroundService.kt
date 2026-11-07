@@ -36,5 +36,3 @@ class UltronBackgroundService : Service() {
         }
     }
 }
-
-
