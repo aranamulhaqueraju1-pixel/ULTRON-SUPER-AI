@@ -1,4 +1,4 @@
-package com.ultron.core
+package com.ultron.superai
 
 import android.content.Context
 import android.content.Intent
@@ -26,11 +26,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var tvDailyLog: TextView
     private lateinit var securityBrain: UltronSecurityBrain
     private lateinit var tradingEngine: UltronTradingEngine
-      
+    
     private val SPEECH_REQUEST_CODE = 100
-    private var isAutoTradeActive = false // Stealth & Auto Trade switch
+    private var isAutoTradeActive = false
 
-    // PC Server Socket Connection Parameters
     private val executor = Executors.newSingleThreadExecutor()
     private val pcIpAddress = "192.168.1.108"
     private val port = 65000
@@ -39,36 +38,29 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // UI Views Initialization & ID Mapping
         ultronSpeech = findViewById(R.id.ultronSpeech)
         ivCentralBrain = findViewById(R.id.ivCentralBrain)
         tvDailyLog = findViewById(R.id.tvDailyLog)
         val micButton = findViewById<ImageView>(R.id.micButton)
 
-        // 1. Start Central Holographic Brain Rotation Animation
         startBrainRotation()
 
-        // Initialize Core Brains
         securityBrain = UltronSecurityBrain(this)
         tradingEngine = UltronTradingEngine()
 
-        // Start 24/7 Background Foreground Service (Brain #58)
         val serviceIntent = Intent(this, UltronBackgroundService::class.java)
         startService(serviceIntent)
 
-        // 2. Initialize Daily Learning Log Entry on startup & show on UI
         appendLearningLog(this, "System Boot: ৬৪টি সিস্টেম, ১০০টি ট্রেডিং ব্রেন ও ডেইলি মনিটরিং সক্রিয়।")
         tvDailyLog.text = readLearningLog(this)
 
         ultronSpeech.text = "আসসালামু আলাইকুম, বস! ৬৪টি সিস্টেম, ১০০টি ট্রেডিং ব্রেন, পিসি সকেট ও ব্যাকগ্রাউন্ড সার্ভিস সক্রিয়। বলুন, কী করতে হবে?"
 
-        // Voice Command Trigger Button
         micButton.setOnClickListener {
             startVoiceRecognition()
         }
     }
 
-    // Central Brain Rotation Animation Logic
     private fun startBrainRotation() {
         val rotateAnimation = RotateAnimation(
             0f, 360f,
@@ -85,7 +77,7 @@ class MainActivity : AppCompatActivity() {
     private fun startVoiceRecognition() {
         val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
             putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
-            putExtra(RecognizerIntent.EXTRA_LANGUAGE, "bn-BD") // Bangla & English support
+            putExtra(RecognizerIntent.EXTRA_LANGUAGE, "bn-BD")
             putExtra(RecognizerIntent.EXTRA_PROMPT, "আল্ট্রনকে হুকুম দিন, বস...")
         }
         try {
@@ -99,20 +91,16 @@ class MainActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == SPEECH_REQUEST_CODE && resultCode == RESULT_OK) {
             val results = data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
-            val spokenText = results?.get(0)?.toLowerCase(Locale.ROOT) ?: ""
-                      
+            val spokenText = results?.get(0)?.lowercase(Locale.ROOT) ?: ""
             processUltronSupremeCommand(spokenText)
         }
     }
 
     private fun processUltronSupremeCommand(command: String) {
         ultronSpeech.text = "হুকুম পেয়েছি, বস: \"$command\""
-        
-        // Save command interaction into Daily Learning Log & update UI
         appendLearningLog(this, "Voice Command Executed: $command")
 
         when {
-            // 1. Auto Trade Control (Stealth Mode)
             command.contains("auto trade on") -> {
                 isAutoTradeActive = true
                 securityBrain.activateStealthTradingMode(true)
@@ -126,30 +114,23 @@ class MainActivity : AppCompatActivity() {
                 transmitCommandToPC("auto_trade_off")
             }
             command.contains("trading") || command.contains("quotex") || command.contains("binance") -> {
-                // Execute 100 Trading Brains Analysis & Demo Check
                 tradingEngine.executeAdvancedTradingAnalysis("EUR/USD / OTC Pair", isAutoTradeActive) { resultMessage ->
                     ultronSpeech.text = resultMessage
                     Toast.makeText(this, "Trading Brain Updated", Toast.LENGTH_LONG).show()
                 }
                 transmitCommandToPC(command)
             }
-
-            // 2. Security & Ethical Hacking Shield (Brain #12)
             command.contains("security") || command.contains("scan") || command.contains("hacker") -> {
                 val securityReport = securityBrain.executeGodModeProtection()
                 ultronSpeech.text = securityReport
                 transmitCommandToPC(command)
             }
-
-            // 3. YouTube & Music Control
             command.contains("গান") || command.contains("youtube") || command.contains("play") -> {
                 Toast.makeText(this, "YouTube কন্ট্রোল চালু হচ্ছে...", Toast.LENGTH_SHORT).show()
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com"))
                 startActivity(intent)
                 transmitCommandToPC(command)
             }
-
-            // 4. WhatsApp Control
             command.contains("whatsapp") || command.contains("মেসেজ") -> {
                 Toast.makeText(this, "WhatsApp ওপেন করা হচ্ছে...", Toast.LENGTH_SHORT).show()
                 val intent = packageManager.getLaunchIntentForPackage("com.whatsapp")
@@ -160,16 +141,12 @@ class MainActivity : AppCompatActivity() {
                 }
                 transmitCommandToPC(command)
             }
-
-            // 5. Google Real-time Search Analysis
             command.contains("google") || command.contains("খুজো") || command.contains("search") -> {
                 val query = command.replace("google", "").replace("খুজো", "").trim()
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com/search?q=$query"))
                 startActivity(intent)
                 transmitCommandToPC(command)
             }
-
-            // Default Assistant Reply + PC Server Bridge
             else -> {
                 ultronSpeech.text = "বস, আপনার কথা বুঝেছি। ৬৪টি সিস্টেম ও পিসি সার্ভার এটি নিয়ে কাজ করছে।"
                 transmitCommandToPC(command)
@@ -177,7 +154,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // Background Socket Transmission to PC Server (`192.168.1.108:65000`)
     private fun transmitCommandToPC(command: String) {
         executor.execute {
             try {
@@ -188,25 +164,17 @@ class MainActivity : AppCompatActivity() {
                 socket.close()
             } catch (e: Exception) {
                 e.printStackTrace()
-                // If PC is offline, local 64 brains handle everything seamlessly without crashing
             }
         }
     }
 
-    // ---------------------------------------------------------
-    // Daily Learning Log File Management & UI Real-time Binding
-    // ---------------------------------------------------------
-
     private fun appendLearningLog(context: Context, newEntry: String) {
         val fileName = "ultron_learning_log.txt"
         val file = File(context.filesDir, fileName)
-        
         val currentDate = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault()).format(Date())
         val logData = "[$currentDate] - $newEntry\n"
-        
         try {
             file.appendText(logData)
-            // Real-time UI Update on Daily Log View
             if (::tvDailyLog.isInitialized) {
                 tvDailyLog.text = readLearningLog(context)
             }
@@ -218,11 +186,10 @@ class MainActivity : AppCompatActivity() {
     private fun readLearningLog(context: Context): String {
         val fileName = "ultron_learning_log.txt"
         val file = File(context.filesDir, fileName)
-        
         return if (file.exists()) {
             file.readText()
         } else {
-            "কোনো লার্নিং ডাটা পাওয়া যায়নি।"
+            "কোনো লার্নিং ডাটা পাওয়া যায়নি।"
         }
     }
 }
